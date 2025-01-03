@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shorten Link</title>
+</head>
+<body>
+    <h1>Shorten Your Link</h1>
+    
+    <input type="text" id="originalLink" placeholder="Enter your original link here" />
+    <button id="submitBtn">Shorten Link</button>
+
+    <h3>Shortened Link: <span id="shortenedLink"></span></h3>
+
+    <script>
+        // دالة لإرسال طلب إلى API و عرض الاستجابة
+        document.getElementById("submitBtn").addEventListener("click", async function() {
+            // الحصول على الرابط من input
+            const originalLink = document.getElementById("originalLink").value;
+
+            // التحقق من صحة الرابط
+            if (!originalLink) {
+                alert("Please enter a link");
+                return;
+            }
+
+            try {
+                // إرسال طلب API
+                const response = await fetch("/cshorter", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        original_link: originalLink
+                    })
+                });
+
+                // التحقق من حالة الاستجابة
+                if (response.ok) {
+                    const data = await response.json();
+                    const hostnameWithProtocol = window.location.protocol + "//" + window.location.hostname;
+                    document.getElementById("shortenedLink").innerText = hostnameWithProtocol + "/" +data.shorter;
+                } else {
+                    alert("Error in shortening the link");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("There was an error with the request");
+            }
+        });
+    </script>
+</body>
+</html>
