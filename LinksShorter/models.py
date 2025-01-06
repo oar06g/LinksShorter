@@ -12,17 +12,13 @@ class Links(Base):
     short_url = Column(String(100), unique=True, nullable=False)
     clicks = Column(Integer, default=0)
 
-# إنشاء الجلسة المتزامنة
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def create_tables():
-    """دالة لإنشاء الجداول في قاعدة البيانات"""
     Base.metadata.create_all(bind=engine)
 
 if __name__ == "__main__":
-    try:
-        # استدعاء دالة إنشاء الجداول
-        create_tables()
-        print("تم إنشاء الجداول بنجاح.")
-    except Exception as e:
-        print(f"حدث خطأ: {e}")
+  try:
+    create_tables()
+  except Exception as e:
+    print(f"حدث خطأ: {e}")

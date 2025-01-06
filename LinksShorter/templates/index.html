@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL Shortener</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/icon.ico') }}" type="image/x-icon">
     <style>
         * {
             margin: 0;
@@ -84,10 +85,26 @@
         footer a {
             color: #ff6a95;
             text-decoration: none;
+            margin: 0 5px;
         }
 
         footer a:hover {
             text-decoration: underline;
+        }
+
+        .donate-button {
+            margin-top: 10px;
+            display: inline-block;
+            padding: 10px 20px;
+            background: #2575fc;
+            color: #fff;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .donate-button:hover {
+            background: #1b5bd4;
         }
     </style>
 </head>
@@ -104,7 +121,13 @@
             <button id="copy-btn">Copy URL</button>
         </div>
         <footer>
-            <p>&copy; 2025 by <a href="#">Omar Mohamed</a></p>
+            <p>&copy; 2025 by Omar Mohamed</p>
+            <p>
+                <a href="https://instagram.com/oar06g" target="_blank">Instagram</a> |
+                <a href="https://github.com/oar06g" target="_blank">GitHub</a> |
+                <a href="https://linkedin.com/in/oar06g" target="_blank">LinkedIn</a>
+            </p>
+            <a href="https://paypal.me/oar06g" target="_blank" class="donate-button">Donate via PayPal</a>
         </footer>
     </div>
 
