@@ -12,6 +12,13 @@ class Links(Base):
     short_url = Column(String(100), unique=True, nullable=False)
     clicks = Column(Integer, default=0)
 
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), nullable=False)
+    email = Column(String(100), unique=True, nullable=False)
+    password = Column(String(200), nullable=False)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def create_tables():

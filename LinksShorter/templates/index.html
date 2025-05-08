@@ -1,177 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='img/icon.ico') }}" type="image/x-icon">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-        }
-
-        .input-section,
-        .result-section {
-            margin-bottom: 20px;
-        }
-
-        .input-section input,
-        .result-section input {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .input-section button,
-        .result-section button {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            background: #ff6a95;
-            font-size: 1rem;
-            color: #fff;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .input-section button:hover,
-        .result-section button:hover {
-            background: #e05584;
-        }
-
-        .result-section {
-            display: none;
-        }
-
-        footer {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        footer a {
-            color: #ff6a95;
-            text-decoration: none;
-            margin: 0 5px;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        .donate-button {
-            margin-top: 10px;
-            display: inline-block;
-            padding: 10px 20px;
-            background: #2575fc;
-            color: #fff;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: background 0.3s;
-        }
-
-        .donate-button:hover {
-            background: #1b5bd4;
-        }
-    </style>
+    <title>Link Shortener</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white py-4 shadow-md">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Link Shortener</h1>
+            <nav>
+                <a href="login.html" class="hover:underline mx-2">Login</a>
+                <a href="signup.html" class="hover:underline mx-2">Sign Up</a>
+            </nav>
+        </div>
+    </header>
 
-<body>
-    <div class="container">
-        <h1>Shorten Your URL</h1>
-        <div class="input-section">
-            <input type="text" id="original-url" placeholder="Paste your URL here...">
-            <button id="create-btn">Shorten URL</button>
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        <!-- Shorten URL Section -->
+        <section class="bg-white p-6 rounded-lg shadow-lg mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Shorten Your Link</h2>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <input type="url" id="longUrl" placeholder="Enter your long URL" class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                <button id="shortenBtn" class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition duration-300">Shorten</button>
+            </div>
+            <div id="result" class="mt-4 hidden">
+                <p class="text-gray-700">Shortened URL:</p>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="text" id="shortUrl" class="flex-grow p-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                    <button id="copyBtn" class="bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition duration-300">Copy</button>
+                </div>
+            </div>
+            <p id="error" class="text-red-500 mt-2 hidden"></p>
+        </section>
+
+        <!-- History Section -->
+        <section class="bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Shortened Links History</h2>
+            <div id="history" class="space-y-4"></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 Link Shortener. All rights reserved.</p>
         </div>
-        <div class="result-section" id="result">
-            <input type="text" id="short-url" readonly>
-            <button id="copy-btn">Copy URL</button>
-        </div>
-        <footer>
-            <p>&copy; 2025 by Omar Mohamed</p>
-            <p>
-                <a href="https://instagram.com/oar06g" target="_blank">Instagram</a> |
-                <a href="https://github.com/oar06g" target="_blank">GitHub</a> |
-                <a href="https://linkedin.com/in/oar06g" target="_blank">LinkedIn</a>
-            </p>
-            <a href="https://paypal.me/oar06g" target="_blank" class="donate-button">Donate via PayPal</a>
-        </footer>
-    </div>
+    </footer>
 
     <script>
-        document.getElementById('create-btn').addEventListener('click', async () => {
-            const originalUrl = document.getElementById('original-url').value;
-            const resultSection = document.getElementById('result');
+        // Simulate URL shortening (replace with actual API call in production)
+        function shortenUrl(longUrl) {
+            // This is a mock function. In a real app, you'd call an API like Short.io or Bitly
+            const randomString = Math.random().toString(36).substring(2, 8);
+            return `https://short.ly/${randomString}`;
+        }
 
-            if (!originalUrl) {
-                alert("Please enter a valid URL.");
-                return;
-            }
+        // Validate URL
+        function isValidUrl(url) {
+            const urlPattern = /^(https?:\/\/)?([\w\-]+(\.[\w\-]+)+[/#?]?.*)$/;
+            return urlPattern.test(url);
+        }
 
-            try {
-                const response = await fetch("/cshorter", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ original_link: originalUrl })
-                });
+        // Save to localStorage
+        function saveToHistory(longUrl, shortUrl) {
+            let history = JSON.parse(localStorage.getItem('urlHistory')) || [];
+            history.unshift({ longUrl, shortUrl, date: new Date().toLocaleString() });
+            localStorage.setItem('urlHistory', JSON.stringify(history));
+            displayHistory();
+        }
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+        // Display history
+        function displayHistory() {
+            const historyDiv = document.getElementById('history');
+            let history = JSON.parse(localStorage.getItem('urlHistory')) || [];
+            historyDiv.innerHTML = history.length === 0 ? '<p class="text-gray-500">No links shortened yet.</p>' : '';
+            
+            history.forEach(item => {
+                const entry = document.createElement('div');
+                entry.className = 'border-b border-gray-200 py-2';
+                entry.innerHTML = `
+                    <p class="text-sm text-gray-600">${item.date}</p>
+                    <p class="text-gray-700 break-all"><strong>Original:</strong> ${item.longUrl}</p>
+                    <p class="text-blue-600 break-all"><strong>Shortened:</strong> <a href="${item.shortUrl}" target="_blank">${item.shortUrl}</a></p>
+                `;
+                historyDiv.appendChild(entry);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            displayHistory();
+
+            const shortenBtn = document.getElementById('shortenBtn');
+            const longUrlInput = document.getElementById('longUrl');
+            const resultDiv = document.getElementById('result');
+            const shortUrlInput = document.getElementById('shortUrl');
+            const copyBtn = document.getElementById('copyBtn');
+            const errorP = document.getElementById('error');
+
+            shortenBtn.addEventListener('click', () => {
+                const longUrl = longUrlInput.value.trim();
+                
+                // Reset UI
+                errorP.classList.add('hidden');
+                resultDiv.classList.add('hidden');
+
+                if (!longUrl) {
+                    errorP.textContent = 'Please enter a URL';
+                    errorP.classList.remove('hidden');
+                    return;
                 }
 
-                const data = await response.json();
-                const shortUrl = `${window.location.origin}/${data.shorter}`;
+                if (!isValidUrl(longUrl)) {
+                    errorP.textContent = 'Please enter a valid URL';
+                    errorP.classList.remove('hidden');
+                    return;
+                }
 
-                document.getElementById('short-url').value = shortUrl;
-                resultSection.style.display = 'block';
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to shorten the URL. Please try again later.');
-            }
-        });
+                // Simulate shortening
+                const shortUrl = shortenUrl(longUrl);
+                shortUrlInput.value = shortUrl;
+                resultDiv.classList.remove('hidden');
+                
+                // Save to history
+                saveToHistory(longUrl, shortUrl);
+            });
 
-        document.getElementById('copy-btn').addEventListener('click', () => {
-            const shortUrl = document.getElementById('short-url');
-            shortUrl.select();
-            document.execCommand('copy');
-            navigator.clipboard.writeText(shortUrl.value).then(() => {
-                alert('Copied to clipboard!');
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(shortUrlInput.value).then(() => {
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => copyBtn.textContent = 'Copy', 2000);
+                });
             });
         });
     </script>
 </body>
-
 </html>

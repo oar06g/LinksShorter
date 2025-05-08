@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/icon.ico') }}" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .input-section,
+        .result-section {
+            margin-bottom: 20px;
+        }
+
+        .input-section input,
+        .result-section input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .input-section button,
+        .result-section button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #ff6a95;
+            font-size: 1rem;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .input-section button:hover,
+        .result-section button:hover {
+            background: #e05584;
+        }
+
+        .result-section {
+            display: none;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        footer a {
+            color: #ff6a95;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .donate-button {
+            margin-top: 10px;
+            display: inline-block;
+            padding: 10px 20px;
+            background: #2575fc;
+            color: #fff;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .donate-button:hover {
+            background: #1b5bd4;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Shorten Your URL</h1>
+        <div class="input-section">
+            <input type="text" id="original-url" placeholder="Paste your URL here...">
+            <button id="create-btn">Shorten URL</button>
+        </div>
+        <div class="result-section" id="result">
+            <input type="text" id="short-url" readonly>
+            <button id="copy-btn">Copy URL</button>
+        </div>
+        <footer>
+            <p>&copy; 2025 by Omar Mohamed</p>
+            <p>
+                <a href="https://instagram.com/oar06g" target="_blank">Instagram</a> |
+                <a href="https://github.com/oar06g" target="_blank">GitHub</a> |
+                <a href="https://linkedin.com/in/oar06g" target="_blank">LinkedIn</a>
+            </p>
+            <a href="https://paypal.me/oar06g" target="_blank" class="donate-button">Donate via PayPal</a>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('create-btn').addEventListener('click', async () => {
+            const originalUrl = document.getElementById('original-url').value;
+            const resultSection = document.getElementById('result');
+
+            if (!originalUrl) {
+                alert("Please enter a valid URL.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/cshorter", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ original_link: originalUrl })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                const shortUrl = `${window.location.origin}/${data.shorter}`;
+
+                document.getElementById('short-url').value = shortUrl;
+                resultSection.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to shorten the URL. Please try again later.');
+            }
+        });
+
+        document.getElementById('copy-btn').addEventListener('click', () => {
+            const shortUrl = document.getElementById('short-url');
+            shortUrl.select();
+            document.execCommand('copy');
+            navigator.clipboard.writeText(shortUrl.value).then(() => {
+                alert('Copied to clipboard!');
+            });
+        });
+    </script>
+</body>
+
+</html>

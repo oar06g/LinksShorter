@@ -6,7 +6,7 @@ import os
 class Config:
   def __init__(self):
     load_dotenv()
-    self.username = os.getenv("USERNAME")
+    self.username = os.getenv("USERNAME_DB")
     self.password = os.getenv("PASSWORD")
     self.host = os.getenv("HOST")
     self.database = os.getenv("DB_NAME")

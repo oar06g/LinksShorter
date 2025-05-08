@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
 from LinksShorter.config import SessionLocal
-from LinksShorter.models import Links
+from LinksShorter.models import Links, User
 from LinksShorter.functions import generate_short_link
 from sqlalchemy import select
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app_index = Blueprint('app_index', __name__, template_folder='templates')
 
@@ -55,5 +56,43 @@ def redirect_to_link(short_u):
       return redirect(db_link.original_url)
     
     return redirect(url_for("app_index.not_found"))
+  finally:
+    session.close()
+
+@app_index.route('/register', methods=['GET', 'POST'])
+def register():
+  if request.method == 'GET':
+    return render_template('register.html')
+  
+  # POST method
+  name = request.form.get('name')
+  email = request.form.get('email')
+  password = request.form.get('password')
+  confirm_password = request.form.get('confirm-password')
+
+  if not name or not email or not password or not confirm_password:
+    flash('Please fill out all fields.', 'error')
+    return render_template('register.html', name=name, email=email)
+
+  if password != confirm_password:
+    flash('Passwords do not match.', 'error')
+    return render_template('register.html', name=name, email=email)
+
+  session = SessionLocal()
+  try:
+    existing_user = session.execute(
+      select(User).filter(User.email == email)
+    ).scalars().first()
+
+    if existing_user:
+      flash('Email already registered.', 'error')
+      return render_template('register.html', name=name, email=email)
+
+    hashed_password = generate_password_hash(password)
+    new_user = User(name=name, email=email, password=hashed_password)
+    session.add(new_user)
+    session.commit()
+    flash('Registration successful. Please log in.', 'success')
+    return redirect(url_for('app_index.index'))
   finally:
     session.close()
